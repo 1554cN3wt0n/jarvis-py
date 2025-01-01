@@ -34,11 +34,14 @@ def attention(q, k, v, mask=None):
     return softmax(q @ k.T / np.sqrt(q.shape[-1]) + mask) @ v
 
 
-def mha(x, c_attn, c_proj, n_head):
+def mha(x, c_attn, c_proj, n_head, mask_enabled=False):
     x = linear(x, **c_attn)
     qkv_heads = list(
         map(lambda x: np.split(x, n_head, axis=-1), np.split(x, 3, axis=-1))
     )
-    out_heads = [attention(q, k, v) for q, k, v in zip(*qkv_heads)]
+    causal_mask = None
+    if mask_enabled:
+        causal_mask = (1 - np.tri(x.shape[0], dtype=x.dtype)) * -1e10
+    out_heads = [attention(q, k, v, mask=causal_mask) for q, k, v in zip(*qkv_heads)]
     x = linear(np.hstack(out_heads), **c_proj)
     return x
