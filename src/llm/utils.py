@@ -83,3 +83,47 @@ def convolution_1d(input_tensor, weights, bias, stride=1, padding=0):
     output_tensor += bias[:, None]  # Bias broadcasted to match output shape
 
     return output_tensor
+
+
+def convolution_2d(image, kernel, stride=2, padding=0):
+    # Extract dimensions
+    in_channels, img_width, img_height = image.shape
+    in_channels_k, out_channels, k_width, k_height = kernel.shape
+
+    # Ensure the kernel matches input channels
+    if in_channels != in_channels_k:
+        raise ValueError(
+            "The number of input channels in the image and kernel must match."
+        )
+
+    # Add padding to the image
+    if padding > 0:
+        image = np.pad(
+            image,
+            pad_width=((0, 0), (padding, padding), (padding, padding)),
+            mode="constant",
+            constant_values=0,
+        )
+
+    # Calculate output dimensions
+    out_width = (image.shape[1] - k_width) // stride + 1
+    out_height = (image.shape[2] - k_height) // stride + 1
+
+    # Use stride tricks to create a sliding window view of the image
+    shape = (in_channels, out_width, out_height, k_width, k_height)
+    strides = (
+        image.strides[0],
+        stride * image.strides[1],
+        stride * image.strides[2],
+        image.strides[1],
+        image.strides[2],
+    )
+
+    sliding_windows = np.lib.stride_tricks.as_strided(
+        image, shape=shape, strides=strides
+    )
+
+    # Perform the convolution
+    conv_result = np.einsum("cxykh,cokh->oxy", sliding_windows, kernel)
+
+    return conv_result
