@@ -1,5 +1,5 @@
 import gradio as gr
-from src.core.chatbot import AskMeAnything
+from core.jarvis import JARVIS
 from argparse import ArgumentParser, BooleanOptionalAction
 from dotenv import load_dotenv
 
@@ -14,7 +14,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-model = AskMeAnything()
+model = JARVIS()
 
 
 def load_document(file, url):

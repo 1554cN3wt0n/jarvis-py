@@ -92,7 +92,7 @@ class Whisper:
         x = layer_norm(x, **params["decoder"]["ln_f"])
         return x
 
-    def generate(self, audio_features, n_tokens):
+    def generate(self, audio_features, n_tokens=100):
         # Encode audio
         encoder_output = self.encoder(audio_features, self.params, self.hparams)
 

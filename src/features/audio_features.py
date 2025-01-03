@@ -383,3 +383,40 @@ def pad(
                 constant_values=padding_value,
             )
     return processed_features
+
+
+class AudioFeaturesExtractor:
+    def __init__(
+        self,
+        feature_size=80,
+        sampling_rate=16000,
+        n_fft=400,
+        hop_length=160,
+        chunk_length=30,
+    ):
+        self.feature_size = feature_size
+        self.sampling_rate = sampling_rate
+        self.n_fft = n_fft
+        self.hop_length = hop_length
+        self.chunk_length = chunk_length
+        self.n_samples = chunk_length * sampling_rate
+        self.mel_filters = mel_filter_bank(
+            num_frequency_bins=1 + n_fft // 2,
+            num_mel_filters=feature_size,
+            min_frequency=0.0,
+            max_frequency=8000.0,
+            sampling_rate=sampling_rate,
+            norm="slaney",
+            mel_scale="slaney",
+        )
+
+    def extract(
+        self,
+        audio_data: List[np.ndarray],
+    ):
+        return extract_fbank_features(
+            pad(audio_data, max_length=self.n_samples),
+            n_fft=self.n_fft,
+            hop_length=self.hop_length,
+            mel_filters=self.mel_filters,
+        )
