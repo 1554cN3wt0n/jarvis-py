@@ -1,0 +1,16 @@
+services:
+  backend:
+    image: tools/jarvis:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${BASE_PATH_MOUNT}:/models
+    environment:
+      - BERT_MODEL_PATH=/models/tinybert/tinybert_converted.bin
+      - BERT_TOKENIZER_PATH=/models/tinybert/bert_tokenizer.json
+      - BERT_EMB_MODEL_PATH=/models/bert_emb/pytorch_model_converted.bin
+      - BERT_EMB_TOKENIZER_PATH=/models/bert_emb/tokenizer.json
+      - GPT2_MODEL_PATH=/models/gpt2/gpt2_converted.bin
+      - GPT2_TOKENIZER_PATH=/models/gpt2/tokenizer.json
+      - WHISPER_MODEL_PATH=/models/whisper/pytorch_model_converted.bin
+      - WHISPER_TOKENIZER_PATH=/models/whisper/tokenizer.json
