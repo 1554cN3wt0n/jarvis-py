@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js"></script>
   </head>
   <body>
     <div class="container">
@@ -38,13 +39,20 @@
         ></textarea>
         <button class="ask-button" onclick="askQuestion()">Ask</button>
         <button class="voice-button" onclick="startVoiceInput()">🎤</button>
+        <button
+          class="voice-button"
+          id="stop-voice"
+          onclick="stopVoiceInput()"
+          disabled
+        >
+          ⏹️
+        </button>
       </div>
 
       <div id="answer" class="answer-section hidden">
         Answer will appear here...
       </div>
     </div>
-
     <script src="script.js"></script>
   </body>
 </html>

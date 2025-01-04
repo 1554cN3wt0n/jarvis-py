@@ -1,3 +1,6 @@
+let recorder;
+let audioStream;
+
 function handleFileUpload(event) {
   const files = event.target.files;
   if (files.length > 0) {
@@ -5,7 +8,7 @@ function handleFileUpload(event) {
   }
   var data = new FormData();
   data.append("file", files[0]);
-  fetch("http://localhost:4200/document?type=file", {
+  fetch("/document?type=file", {
     method: "POST",
     body: data,
   })
@@ -27,10 +30,9 @@ function askQuestion() {
   document.getElementById("answer").classList.remove("hidden");
   document.getElementById("answer").textContent = "Fetching answer...";
 
-  fetch(`http://localhost:4200/ask?question=${question}`)
+  fetch(`/ask?question=${question}`)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       document.getElementById("answer").textContent = result["answer"];
     })
     .catch((error) => {
@@ -39,5 +41,48 @@ function askQuestion() {
 }
 
 function startVoiceInput() {
-  alert("Voice input not implemented yet!");
+  navigator.mediaDevices
+    .getUserMedia({ audio: true })
+    .then((stream) => {
+      audioStream = stream;
+      recorder = new Recorder(
+        new AudioContext().createMediaStreamSource(stream),
+        {
+          numChannels: 1,
+        }
+      );
+
+      recorder.record();
+      document.getElementById("stop-voice").disabled = false;
+    })
+    .catch((error) => {
+      console.error("Error accessing microphone:", error);
+    });
+}
+
+function stopVoiceInput() {
+  console.log("her");
+  if (recorder) {
+    console.log("Stopping voice input...");
+    recorder.stop();
+    recorder.exportWAV((blob) => {
+      const formData = new FormData();
+      formData.append("audio_file", blob, "audio.wav");
+
+      fetch("/transcript", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Audio sent successfully:", data);
+        })
+        .catch((error) => {
+          console.error("Error sending audio:", error);
+        });
+    });
+
+    audioStream.getTracks().forEach((track) => track.stop());
+    document.getElementById("stop-voice").disabled = true;
+  }
 }
