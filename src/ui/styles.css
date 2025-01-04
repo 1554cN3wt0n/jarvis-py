@@ -1,0 +1,103 @@
+body {
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1e1e2f;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    background-color: #2a2a3c;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #61dafb;
+  }
+
+  .upload-section {
+    margin-bottom: 20px;
+  }
+
+  .upload-section input[type="file"] {
+    display: none;
+  }
+
+  .upload-section label {
+    display: inline-block;
+    background-color: #3a3a4f;
+    color: #61dafb;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .upload-section label:hover {
+    background-color: #505066;
+  }
+
+  .question-section {
+    margin-bottom: 20px;
+  }
+
+  .question-input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
+  .ask-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #61dafb;
+    color: #2a2a3c;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+
+  .ask-button:hover {
+    background-color: #3cbbe6;
+  }
+
+  .voice-button {
+    background: none;
+    border: none;
+    color: #61dafb;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: color 0.3s;
+  }
+
+  .voice-button:hover {
+    color: #3cbbe6;
+  }
+
+  .answer-section {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #1f1f30;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  .answer-section.hidden {
+    display: none;
+  }

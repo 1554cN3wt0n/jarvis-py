@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document Q&A Interface</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Document Q&A Interface</h1>
+
+      <div class="upload-section">
+        <label for="file-upload">Upload Documents</label>
+        <div
+          class="upload-box"
+          onclick="document.getElementById('file-upload').click()"
+        >
+          <input
+            type="file"
+            id="file-upload"
+            multiple
+            onchange="handleFileUpload(event)"
+          />
+          <span>Click or drag files here to upload</span>
+        </div>
+      </div>
+
+      <div class="question-section">
+        <textarea
+          id="question"
+          class="question-input"
+          placeholder="Type your question here..."
+        ></textarea>
+        <button class="ask-button" onclick="askQuestion()">Ask</button>
+        <button class="voice-button" onclick="startVoiceInput()">🎤</button>
+      </div>
+
+      <div id="answer" class="answer-section hidden">
+        Answer will appear here...
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

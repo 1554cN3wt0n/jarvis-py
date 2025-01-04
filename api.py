@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile
+from fastapi.staticfiles import StaticFiles
 from src.core.jarvis import JARVIS
 import soundfile as sf
 from io import BytesIO
@@ -8,6 +9,8 @@ load_dotenv()
 
 app = FastAPI()
 jarvis = JARVIS()
+
+app.mount("/ui", StaticFiles(directory="src/ui"), name="ui")
 
 
 @app.post("/document")
@@ -39,8 +42,8 @@ async def load_document(
 def ask(question: str):
     """
     Ask a question to Jarvis."""
-    answers = jarvis.answer(question)
-    return {"answers": answers}
+    answer = jarvis.answer(question)
+    return {"answer": answer}
 
 
 @app.post("/transcript")
