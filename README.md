@@ -35,6 +35,12 @@ GPT2_TOKENIZER_PATH=/path/to/gpt2/tokenizer.json
 
 WHISPER_MODEL_PATH=/path/to/whisper/pytorch_model_converted.bin
 WHISPER_TOKENIZER_PATH=/path/to/whisper/tokenizer.json
+
+VIT_MODEL_PATH=/path/to/vit/pytorch_model_converted.bin
+VIT_CONFIG_PATH=/path/to/vit/config.json
+
+YOLOS_MODEL_PATH=/path/to/yolos/pytorch_model_converted.bin
+YOLOS_CONFIG_PATH=/path/to/yolos/config.json
 ```
 
 Make sure to replace the placeholder paths with the actual paths where your models and tokenizers are stored.
@@ -85,12 +91,18 @@ docker compose -f ./deployment/docker-compose.yaml up
 
 ## References
 
+Implementation of the inference for the following models that use transformers were based on the [picoGPT implementation ](https://github.com/jaymody/picoGPT)
+
 - BERT models (used for QA and Text Embedding)
   - Weights and Tokenizers:
     - QA Model: [Intel/dynamic_tinybert](https://huggingface.co/Intel/dynamic_tinybert)
     - Text Embedding model:[sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
-  - Implementation of the inference for the bert models was based on the [picoGPT implementation ](https://github.com/jaymody/picoGPT)
 - Whisper
   - Weights and Tokenizers:
     - Speech Recognition : [openai/whisper-tiny.en](https://huggingface.co/openai/whisper-tiny.en)
-  - Implementation of the inferece for the whisper model was based on the [picoGPT implementation ](https://github.com/jaymody/picoGPT)
+- ViT
+  - Weights and Config:
+    - Image Classification : [WinKawaks/vit-tiny-patch16-224](https://huggingface.co/WinKawaks/vit-tiny-patch16-224)
+- YOLOs
+  - Weights and Tokenizers:
+    - Object Detection : [hustvl/yolos-tiny](https://huggingface.co/hustvl/yolos-tiny)
