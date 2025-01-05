@@ -101,3 +101,20 @@ body {
   .answer-section.hidden {
     display: none;
   }
+
+  .audio-wave-container {
+    margin-top: 20px;
+    width: 100%;
+    height: 150px;
+    background: #f3f3f3;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #audio-visualizer {
+    width: 100%;
+    height: 100%;
+  }
+  
