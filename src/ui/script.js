@@ -68,6 +68,9 @@ function startVoiceInput() {
 
       source.connect(analyser);
 
+      const waveContainer = document.querySelector(".audio-wave-container");
+      waveContainer.classList.remove("hidden");
+
       visualize();
     })
     .catch((error) => {
