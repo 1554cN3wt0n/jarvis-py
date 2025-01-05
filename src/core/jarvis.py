@@ -1,8 +1,10 @@
 from src.llm.bert_qa import BertQA
 from src.llm.whisper import Whisper
+from src.llm.vit import ViT
+from src.llm.yolos import Yolos
 from src.core.knowledge import Knowledge
-from src.features.audio_features import AudioFeaturesExtractor
 import numpy as np
+from PIL import Image
 
 
 def topk(arr, k, axis=0):
@@ -17,15 +19,17 @@ class JARVIS(Knowledge):
         # Loading Models
         self.bert_qa = BertQA()
         self.whisper = Whisper()
-        self.audio_features_extractor = AudioFeaturesExtractor()
+        self.vit = ViT()
+        self.yolos = Yolos()
 
-    def transcript(self, audio_array: np.ndarray) -> str:
-        audio_features = self.audio_features_extractor.extract(audio_array)
-        return self.whisper.generate(audio_features[0])
+    def transcript(self, audio_data: np.ndarray) -> str:
+        return self.whisper.transcript(audio_data)
 
-    # Find the answer to the given question in the given context
-    def answer_from_context(self, question: str, context: str) -> str:
-        return self.bert_qa.answer(question, context)
+    def classify_image(self, image: Image) -> str:
+        return self.vit.classify(image)
+
+    def detect_objects(self, image: np.ndarray) -> str:
+        return self.yolos.detect_objects(image)
 
     def answer(self, question: str) -> str:
         # Embed the question
@@ -38,4 +42,4 @@ class JARVIS(Knowledge):
         chunk = document.get_chunk(emb_question)
 
         # Find the answer to the question in the context
-        return self.answer_from_context(question, chunk.text)
+        return self.bert_qa.answer(question, chunk.text)

@@ -11,21 +11,32 @@ from src.llm.utils import (
     gelu,
 )
 from src.features.image_features import resize_bicubic
+from src.features.utils import gauss_norm
+from PIL import Image
 import numpy as np
+import json
 
 
 class Yolos:
-    def __init__(self, model_path=None, n_head=3):
+    def __init__(self, model_path=None, config_path=None, n_head=3):
         if model_path is None:
             model_path = os.getenv("YOLOS_MODEL_PATH")
+        if config_path is None:
+            config_path = os.getenv("YOLOS_CONFIG_PATH")
         self.n_head = n_head
         self.load_model(model_path)
+        self.load_config(config_path)
 
     def load_model(self, model_path):
         with open(model_path, "rb") as f:
             model = pickle.load(f)
             self.params = model["params"]
             self.hparams = model["hparams"]
+
+    def load_config(self, config_path):
+        with open(config_path, "r", encoding="utf8") as f:
+            data = json.load(f)
+            self.id2label = data["id2label"]
 
     def transformer_block(self, x, mlp, attn, ln_1, ln_2, n_head):
         x = x + mha(layer_norm(x, **ln_1), **attn, n_head=n_head)
@@ -105,3 +116,19 @@ class Yolos:
                 bboxes = relu(linear(bboxes, **block))
         bboxes = sigmoid(bboxes)
         return classes, bboxes
+
+    def detect_objects(self, image: Image):
+        raw_img = (
+            np.array(image.getdata())
+            .reshape(image.height, image.width, 3)
+            .transpose(2, 0, 1)
+            .astype(float)
+        )
+        raw_img = gauss_norm(raw_img / 255)
+        classes, boxes = self(raw_img)
+        label_idxs = np.argmax(classes, axis=1)
+        res = []
+        for idx, box in zip(label_idxs, boxes):
+            if idx < 91:
+                res.append({"label": self.id2label[str(idx)], "box": box.tolist()})
+        return res

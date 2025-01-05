@@ -3,6 +3,7 @@ import pickle
 from tokenizers import Tokenizer
 import os
 from src.llm.utils import layer_norm, ffn, mha, gelu, convolution_1d
+from src.features.audio_features import AudioFeaturesExtractor
 
 
 class Whisper:
@@ -14,6 +15,7 @@ class Whisper:
         self.n_head = n_head
         self.load_model(model_path)
         self.load_tokenizer(tokenizer_path)
+        self.audio_features_extractor = AudioFeaturesExtractor()
 
     def load_model(self, model_path):
         with open(model_path, "rb") as f:
@@ -92,7 +94,7 @@ class Whisper:
         x = layer_norm(x, **params["decoder"]["ln_f"])
         return x
 
-    def generate(self, audio_features, n_tokens=100):
+    def __call__(self, audio_features, n_tokens=100):
         # Encode audio
         encoder_output = self.encoder(audio_features, self.params, self.hparams)
 
@@ -105,3 +107,10 @@ class Whisper:
                 break
             input_ids.append(next_token)
         return self.tokenizer.decode(input_ids)
+
+    def transcript(self, audio_data: np.ndarray):
+        # Extract audio features
+        audio_features = self.audio_features_extractor.extract(audio_data)
+
+        # Transcript the audio using whisper model
+        return self(audio_features[0])

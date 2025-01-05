@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from src.core.jarvis import JARVIS
 import soundfile as sf
 from io import BytesIO
+from PIL import Image
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,6 +37,26 @@ async def load_document(
         return {"message": "Document loaded. You can now ask questions."}
 
     return {"message": "No context was loaded"}
+
+
+@app.post("/image")
+async def classify_image(image_file: UploadFile):
+    """
+    Transcribe an audio file."""
+    image_bytes = await image_file.read()
+    image = Image.open(BytesIO(image_bytes))
+    classification = jarvis.classify_image(image)
+    return {"label": classification}
+
+
+@app.post("/detect")
+async def detect_objects(image_file: UploadFile):
+    """
+    Transcribe an audio file."""
+    image_bytes = await image_file.read()
+    image = Image.open(BytesIO(image_bytes))
+    result = jarvis.detect_objects(image)
+    return {"objects": result}
 
 
 @app.get("/ask")

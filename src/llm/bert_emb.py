@@ -7,12 +7,8 @@ from src.llm.utils import (
     mha,
     gelu,
 )
+from src.features.utils import mean_pooling_and_normalization
 import os
-
-
-def mean_pooling_and_normalization(x):
-    o = np.mean(x, axis=0)
-    return o / np.linalg.norm(o)
 
 
 class BertEmbedding:
