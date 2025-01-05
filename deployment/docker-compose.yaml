@@ -14,3 +14,7 @@ services:
       - GPT2_TOKENIZER_PATH=/models/gpt2/tokenizer.json
       - WHISPER_MODEL_PATH=/models/whisper/pytorch_model_converted.bin
       - WHISPER_TOKENIZER_PATH=/models/whisper/tokenizer.json
+      - VIT_MODEL_PATH=/models/vit/pytorch_model_converted.bin
+      - VIT_CONFIG_PATH=/models/vit/config.json
+      - YOLOS_MODEL_PATH=/models/yolos/pytorch_model_converted.bin
+      - YOLOS_CONFIG_PATH=/models/yolos/config.json
