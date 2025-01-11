@@ -2,7 +2,7 @@ import numpy as np
 from tokenizers import Tokenizer
 import pickle
 import random
-from src.llm.utils import (
+from src.ai.nn import (
     layer_norm,
     ffn,
     mha,

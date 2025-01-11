@@ -15,28 +15,14 @@ app.mount("/ui", StaticFiles(directory="src/ui"), name="ui")
 
 
 @app.post("/document")
-async def load_document(
-    type: str, url: str = None, text: str = None, file: UploadFile = None
-):
+async def load_document(file: UploadFile = None):
     """
     Load a document to the Jarvis context."""
 
-    if type == "url":
-        jarvis.load_context_from_wiki(url)
-        return {"message": "Document loaded. You can now ask questions."}
-
-    if type == "file":
-        file_content = await file.read()
-        file_str = file_content.decode("utf-8")
-        jarvis.load_context_from_raw_text(file_str)
-        return {"message": "Document loaded. You can now ask questions."}
-
-    if type == "raw_text":
-        raw_text = text
-        jarvis.load_context_from_raw_text(raw_text)
-        return {"message": "Document loaded. You can now ask questions."}
-
-    return {"message": "No context was loaded"}
+    file_content = await file.read()
+    file_str = file_content.decode("utf-8")
+    jarvis.load_context(file_str)
+    return {"message": "Document loaded. You can now ask questions."}
 
 
 @app.post("/image")

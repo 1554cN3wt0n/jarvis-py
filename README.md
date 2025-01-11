@@ -47,19 +47,7 @@ Make sure to replace the placeholder paths with the actual paths where your mode
 
 ## Usage
 
-Run the main script to start with the virtual assistant:
-
-NOTE: You might have to install gradio
-
-```sh
-pip install gradio
-```
-
-```bash
-python main.py
-```
-
-Or you can run the api server by running the following commnad:
+Run the api server by running the following commnad:
 
 ```sh
 uvicorn api:app --port 8080

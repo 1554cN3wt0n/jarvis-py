@@ -1,22 +1,21 @@
-import numpy as np
 from tokenizers import Tokenizer
 import pickle
-from src.llm.utils import (
+from src.ai.nn import (
     layer_norm,
-    linear,
     ffn,
     mha,
-    relu,
+    gelu,
 )
+from src.ai.features.utils import mean_pooling_and_normalization
 import os
 
 
-class BertQA:
+class BertEmbedding:
     def __init__(self, model_path=None, tokenizer_path=None, n_head=12):
         if model_path is None:
-            model_path = os.getenv("BERT_MODEL_PATH")
+            model_path = os.getenv("BERT_EMB_MODEL_PATH")
         if tokenizer_path is None:
-            tokenizer_path = os.getenv("BERT_TOKENIZER_PATH")
+            tokenizer_path = os.getenv("BERT_EMB_TOKENIZER_PATH")
         self.n_head = n_head
         self.load_model(model_path)
         self.load_tokenizer(tokenizer_path)
@@ -29,10 +28,11 @@ class BertQA:
 
     def load_tokenizer(self, tokenizer_path):
         self.tokenizer = Tokenizer.from_file(tokenizer_path)
+        self.tokenizer.no_padding()
 
     def transformer_block(self, x, mlp, attn, ln_1, ln_2, n_head):
         x = layer_norm(x + mha(x, **attn, n_head=n_head), **ln_1)
-        x = layer_norm(x + ffn(x, **mlp, act_fn=relu), **ln_2)
+        x = layer_norm(x + ffn(x, **mlp, act_fn=gelu), **ln_2)
         return x
 
     def encode(self, text):
@@ -48,14 +48,9 @@ class BertQA:
         x = layer_norm(x, **self.params["ln_0"])
         for block in self.params["blocks"]:
             x = self.transformer_block(x, **block, n_head=self.n_head)
-        return linear(x, **self.params["qa"])
+        return x
 
-    def answer(self, question, context):
-        question_ids = self.encode(question)
-        context_ids = self.encode(context)
-        input_ids = question_ids + context_ids[1:]
-        token_type_ids = [0] * len(question_ids) + [1] * len(context_ids[1:])
-        logits = self(input_ids, token_type_ids)
-        idx0 = np.argmax(logits[:, 0])
-        idx1 = np.argmax(logits[:, 1])
-        return self.tokenizer.decode(input_ids[idx0 : idx1 + 1])
+    def embed(self, text):
+        sentence_ids = self.encode(text)
+        output = self(sentence_ids, [0] * len(sentence_ids))
+        return mean_pooling_and_normalization(output)

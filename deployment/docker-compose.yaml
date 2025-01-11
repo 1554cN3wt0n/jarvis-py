@@ -1,5 +1,6 @@
 services:
-  backend:
+  jarvis:
+    container_name: jarvis
     image: tools/jarvis:latest
     ports:
       - "8080:8080"

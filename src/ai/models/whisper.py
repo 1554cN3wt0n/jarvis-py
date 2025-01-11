@@ -2,8 +2,8 @@ import numpy as np
 import pickle
 from tokenizers import Tokenizer
 import os
-from src.llm.utils import layer_norm, ffn, mha, gelu, convolution_1d
-from src.features.audio_features import AudioFeaturesExtractor
+from src.ai.nn import layer_norm, ffn, mha, gelu, convolution_1d
+from src.ai.features.audio_features import AudioFeaturesExtractor
 
 
 class Whisper:
