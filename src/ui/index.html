@@ -15,6 +15,11 @@
     <div class="container">
       <h1>Document Q&A Interface</h1>
 
+      <div class="document-list-section">
+        <h2>Documents</h2>
+        <div id="document-list" class="document-list"></div>
+      </div>
+
       <div class="upload-section">
         <label for="file-upload">Upload Documents</label>
         <div
@@ -26,6 +31,7 @@
             id="file-upload"
             multiple
             onchange="handleFileUpload(event)"
+            onclick="this.value=null;"
           />
           <span>Click or drag files here to upload</span>
         </div>
@@ -40,7 +46,7 @@
           class="question-input"
           placeholder="Type your question here..."
         ></textarea>
-        <button class="ask-button" onclick="askQuestion()">Ask</button>
+        <label class="jarvis-button" onclick="askQuestion()">Ask</label>
         <button class="voice-button" onclick="startVoiceInput()">🎤</button>
         <button
           class="voice-button"

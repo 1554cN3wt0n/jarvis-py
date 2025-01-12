@@ -22,6 +22,7 @@ function handleFileUpload(event) {
     .then((response) => response.json())
     .then((result) => {
       alert(result["message"]);
+      fetchDocumentList();
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -144,3 +145,75 @@ function visualize() {
 
   draw();
 }
+
+async function fetchDocumentList() {
+  try {
+    const response = await fetch("/documents");
+    const clusters = await response.json();
+    displayDocumentList(clusters);
+  } catch (error) {
+    console.error("Error fetching document list:", error);
+  }
+}
+
+function displayDocumentList(clusters) {
+  const documentList = document.getElementById("document-list");
+  documentList.innerHTML = "";
+  for (let cluster in clusters) {
+    clusters[cluster].forEach((doc) => {
+      const docItem = document.createElement("div");
+      docItem.classList.add("document-item");
+
+      // Label for the document name
+      const label = document.createElement("label");
+      label.htmlFor = `doc-${doc.id}`;
+      label.textContent = doc.name;
+
+      // Delete button with trash icon
+      const deleteButton = document.createElement("button");
+      deleteButton.classList.add("delete-button");
+      deleteButton.title = "Delete Document";
+      deleteButton.onclick = () => deleteDocument(cluster, doc.id, docItem);
+
+      const trashIcon = document.createElement("span");
+      trashIcon.classList.add("trash-icon");
+      trashIcon.textContent = "🗑️"; // Unicode for trash icon
+
+      deleteButton.appendChild(trashIcon);
+
+      // Append elements to the document item
+      docItem.appendChild(label);
+      docItem.appendChild(deleteButton);
+
+      documentList.appendChild(docItem);
+    });
+  }
+}
+
+// Function to delete a document by ID
+async function deleteDocument(clusterId, docId, docElement) {
+  try {
+    const response = await fetch(`/cluster/${clusterId}/document/${docId}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      console.log(
+        `Document ${docId} from Cluster ${clusterId} deleted successfully.`
+      );
+      // Update documents list
+      fetchDocumentList();
+    } else {
+      console.error(
+        `Failed to delete document ${docId} from Cluster ${clusterId}:`,
+        response.statusText
+      );
+      alert("Failed to delete the document. Please try again.");
+    }
+  } catch (error) {
+    console.error("Error deleting document:", error);
+    alert("An error occurred while deleting the document.");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", fetchDocumentList);

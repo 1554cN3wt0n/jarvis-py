@@ -14,6 +14,11 @@ jarvis = JARVIS()
 app.mount("/ui", StaticFiles(directory="src/ui"), name="ui")
 
 
+@app.get("/documents")
+def get_all_documents():
+    return jarvis.get_all_documents_list()
+
+
 @app.post("/document")
 async def load_document(file: UploadFile = None):
     """
@@ -21,8 +26,16 @@ async def load_document(file: UploadFile = None):
 
     file_content = await file.read()
     file_str = file_content.decode("utf-8")
-    jarvis.load_context(file_str)
+    jarvis.load_context(file_str, file.filename)
     return {"message": "Document loaded. You can now ask questions."}
+
+
+@app.delete("/cluster/{cluster_id}/document/{document_id}")
+def delete_document(cluster_id: int, document_id: int):
+    ok = jarvis.delete_document(cluster_id, document_id)
+    if ok:
+        return {"status": "OK"}
+    return {"status": "Failed"}
 
 
 @app.post("/image")

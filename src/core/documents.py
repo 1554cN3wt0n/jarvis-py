@@ -1,6 +1,7 @@
-from typing import List
+from typing import Dict, List
 import numpy as np
 from dataclasses import dataclass
+import uuid
 
 
 @dataclass
@@ -16,6 +17,7 @@ class Document:
     document_ref: str
 
     def __init__(self, chunk_texts, chunk_embeddings, document_ref: str):
+        self.id = str(uuid.uuid4())
         self.chunks = [Chunk(text, document_ref) for text in chunk_texts]
         self.chunk_embeddings = chunk_embeddings
         self.embedding = np.mean(self.chunk_embeddings, axis=0)
@@ -44,8 +46,24 @@ class DocumentCluster:
         self.embedding = np.mean(self.document_embeddings, axis=0)
 
     def get_document(self, emb_question: np.array) -> Document:
-        idx = np.argmax(self.document_embeddings @ emb_question.T).item()
-        return self.documents[idx]
+        if len(self.document_embeddings) > 0:
+            idx = np.argmax(self.document_embeddings @ emb_question.T).item()
+            return self.documents[idx]
+        return None
+
+    def get_documents_list(self):
+        return [
+            {"id": idx, "name": doc.document_ref}
+            for idx, doc in enumerate(self.documents)
+        ]
+
+    def delete_document(self, idx):
+        if idx >= len(self.documents):
+            return False
+        self.document_embeddings = np.delete(self.document_embeddings, idx, axis=0)
+        self.documents.pop(idx)
+        self.embedding = np.mean(self.document_embeddings, axis=0)
+        return True
 
 
 class DocumentManager:
@@ -62,3 +80,12 @@ class DocumentManager:
     def get_document(self, emb_question: np.array) -> Document:
         cluster_idx = 0
         return self.clusters[cluster_idx].get_document(emb_question)
+
+    def get_all_documents_list(self):
+        return {
+            idx: cluster.get_documents_list()
+            for idx, cluster in enumerate(self.clusters)
+        }
+
+    def delete_document(self, cluster_id, document_id):
+        return self.clusters[cluster_id].delete_document(document_id)

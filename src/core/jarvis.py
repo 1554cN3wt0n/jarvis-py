@@ -1,35 +1,21 @@
-from src.ai.models.bert_qa import BertQA
-from src.ai.models.whisper import Whisper
-from src.ai.models.vit import ViT
-from src.ai.models.yolos import Yolos
-from src.core.knowledge import Knowledge
-import numpy as np
-from PIL import Image
+from src.ai.engine import AIEngine
+from src.core.documents import DocumentManager, Document
+from src.core.utils import split_text
 
 
-def topk(arr, k, axis=0):
-    idx = np.argpartition(arr, -k, axis=axis)[-k:]
-    return np.take_along_axis(arr, idx, axis=axis)
-
-
-class JARVIS(Knowledge):
+class JARVIS(AIEngine, DocumentManager):
     def __init__(self):
-        super().__init__()
+        AIEngine.__init__(self)
+        DocumentManager.__init__(self)
 
-        # Loading Models
-        self.bert_qa = BertQA()
-        self.whisper = Whisper()
-        self.vit = ViT()
-        self.yolos = Yolos()
-
-    def transcript(self, audio_data: np.ndarray) -> str:
-        return self.whisper.transcript(audio_data)
-
-    def classify_image(self, image: Image) -> str:
-        return self.vit.classify(image)
-
-    def detect_objects(self, image: np.ndarray) -> str:
-        return self.yolos.detect_objects(image)
+    # Load the text from a file as a context
+    def load_context(self, raw_text: str, filename: str = "raw_text") -> None:
+        # Load all paragraphs from a file
+        paragraphs = split_text(raw_text)
+        # Calculate the embeddings from all paragraphs
+        embeddings = self.embed(paragraphs)
+        # Add the document to the document manager
+        self.add_document(Document(paragraphs, embeddings, filename))
 
     def answer(self, question: str) -> str:
         # Embed the question
@@ -38,8 +24,11 @@ class JARVIS(Knowledge):
         # Get context and context embeddings based on the question
         document = self.get_document(emb_question)
 
+        if document is None:
+            return "Could not find any document to answer your question"
+
         # Find all possible paragraphs that are related to the question
         chunk = document.get_chunk(emb_question)
 
         # Find the answer to the question in the context
-        return self.bert_qa.answer(question, chunk.text)
+        return self.answer_from_context(question, chunk.text)
