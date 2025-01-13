@@ -1,5 +1,5 @@
 import json
-from src.tokenizers.utils import EncodedData
+from src.ai.tokenizers.utils import EncodedData
 
 
 class WordPieceTokenizer:

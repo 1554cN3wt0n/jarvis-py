@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from src.core.jarvis import JARVIS
 import soundfile as sf
 from io import BytesIO
@@ -24,7 +25,7 @@ async def save_documents_snapshot():
     """
     Save current context history in an snapshot."""
 
-    jarvis.save_snapshot("snapshots/memory.pkl")
+    jarvis.save_snapshot("tmp/memory.pkl")
     return {"message": "Snapshot saved successfully"}
 
 
@@ -33,7 +34,7 @@ async def load_documents_snapshot():
     """
     Load snapshot into memory."""
 
-    jarvis.load_snapshot("snapshots/memory.pkl")
+    jarvis.load_snapshot("tmp/memory.pkl")
     return {"message": "Snapshot loaded successfully"}
 
 
@@ -91,3 +92,9 @@ async def transcript(audio_file: UploadFile):
     audio_data, _ = sf.read(BytesIO(audio_bytes))
     transcript = jarvis.transcript([audio_data])
     return {"text": transcript}
+
+
+@app.get("/speak")
+async def text_to_speech(text: str):
+    jarvis.speak(text)
+    return FileResponse("tmp/spoken.wav", media_type="audio/wav")

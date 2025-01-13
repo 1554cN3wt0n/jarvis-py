@@ -2,6 +2,7 @@ from src.ai.engine import AIEngine
 from src.core.documents import DocumentManager, Document
 from src.core.utils import split_text
 from typing import Dict
+from src.core.utils import generate_speech
 
 
 class JARVIS(AIEngine, DocumentManager):
@@ -35,3 +36,6 @@ class JARVIS(AIEngine, DocumentManager):
         ans = self.answer_from_context(question, chunk.text)
 
         return {"answer": ans, "chunk": chunk}
+
+    def speak(self, text: str):
+        generate_speech(text)

@@ -1,4 +1,23 @@
 import re
+import sys
+import os
+
+if sys.platform == "win32":
+    import pyttsx3
+
+    tts_engine = pyttsx3.init()
+    voices = tts_engine.getProperty("voices")
+    tts_engine.setProperty("voice", voices[1].id)
+
+    def generate_speech(text: str):
+        tts_engine.save_to_file(text, "tmp/spoken.wav")
+        tts_engine.runAndWait()
+
+elif sys.platform == "linux":
+
+    def generate_speech(text: str):
+        command = f'espeak-ng -w tmp/spoken.wav "{text}"'
+        os.system(command)
 
 
 def split_text(text: str, max_tokens: int = 250):

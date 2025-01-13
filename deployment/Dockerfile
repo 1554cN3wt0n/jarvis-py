@@ -5,6 +5,7 @@ WORKDIR /app
 COPY . /app/
 
 RUN apk add libsndfile libsndfile-dev
+RUN apk add espeak-ng
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8080
