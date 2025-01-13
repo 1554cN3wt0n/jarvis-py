@@ -1,6 +1,7 @@
 from src.ai.engine import AIEngine
 from src.core.documents import DocumentManager, Document
 from src.core.utils import split_text
+from typing import Dict
 
 
 class JARVIS(AIEngine, DocumentManager):
@@ -17,7 +18,7 @@ class JARVIS(AIEngine, DocumentManager):
         # Add the document to the document manager
         self.add_document(Document(paragraphs, embeddings, filename))
 
-    def answer(self, question: str) -> str:
+    def answer(self, question: str) -> Dict[str, any]:
         # Embed the question
         emb_question = self.embed(question)
 
@@ -25,10 +26,12 @@ class JARVIS(AIEngine, DocumentManager):
         document = self.get_document(emb_question)
 
         if document is None:
-            return "Could not find any document to answer your question"
+            return {"answer": "Could not find any document to answer your question"}
 
         # Find all possible paragraphs that are related to the question
         chunk = document.get_chunk(emb_question)
 
         # Find the answer to the question in the context
-        return self.answer_from_context(question, chunk.text)
+        ans = self.answer_from_context(question, chunk.text)
+
+        return {"answer": ans, "chunk": chunk}

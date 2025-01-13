@@ -19,6 +19,24 @@ def get_all_documents():
     return jarvis.get_all_documents_list()
 
 
+@app.post("/documents/snapshot/save")
+async def save_documents_snapshot():
+    """
+    Save current context history in an snapshot."""
+
+    jarvis.save_snapshot("snapshots/memory.pkl")
+    return {"message": "Snapshot saved successfully"}
+
+
+@app.post("/documents/snapshot/load")
+async def load_documents_snapshot():
+    """
+    Load snapshot into memory."""
+
+    jarvis.load_snapshot("snapshots/memory.pkl")
+    return {"message": "Snapshot loaded successfully"}
+
+
 @app.post("/document")
 async def load_document(file: UploadFile = None):
     """
@@ -61,9 +79,8 @@ async def detect_objects(image_file: UploadFile):
 @app.get("/ask")
 def ask(question: str):
     """
-    Ask a question to Jarvis."""
-    answer = jarvis.answer(question)
-    return {"answer": answer}
+    Ask a question to Jarvis based on the uploaded contexts (documents)."""
+    return jarvis.answer(question)
 
 
 @app.post("/transcript")

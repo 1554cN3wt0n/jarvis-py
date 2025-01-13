@@ -1,7 +1,7 @@
-from typing import Dict, List
+from typing import List
 import numpy as np
 from dataclasses import dataclass
-import uuid
+import pickle
 
 
 @dataclass
@@ -17,7 +17,6 @@ class Document:
     document_ref: str
 
     def __init__(self, chunk_texts, chunk_embeddings, document_ref: str):
-        self.id = str(uuid.uuid4())
         self.chunks = [Chunk(text, document_ref) for text in chunk_texts]
         self.chunk_embeddings = chunk_embeddings
         self.embedding = np.mean(self.chunk_embeddings, axis=0)
@@ -89,3 +88,17 @@ class DocumentManager:
 
     def delete_document(self, cluster_id, document_id):
         return self.clusters[cluster_id].delete_document(document_id)
+
+    def save_snapshot(self, path):
+        snapshot = {
+            "clusters": self.clusters,
+            # "cluster_embeddings": self.cluster_embeddings,
+        }
+        with open(path, "wb") as f:
+            pickle.dump(snapshot, f)
+
+    def load_snapshot(self, path):
+        with open(path, "rb") as f:
+            snapshot = pickle.load(f)
+        self.clusters = snapshot["clusters"]
+        # self.cluster_embeddings = snapshot["cluster_embeddings"]
