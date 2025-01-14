@@ -42,6 +42,7 @@ function askQuestion() {
     .then((response) => response.json())
     .then((result) => {
       document.getElementById("answer").textContent = result["answer"];
+      speak(result["answer"]);
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -217,3 +218,24 @@ async function deleteDocument(clusterId, docId, docElement) {
 }
 
 document.addEventListener("DOMContentLoaded", fetchDocumentList);
+
+async function speak(text) {
+  try {
+    const apiUrl = `/speak?text=${text}`;
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audioPlayer = document.getElementById("audio-player");
+
+    audioPlayer.src = audioUrl;
+
+    audioPlayer.play();
+  } catch (error) {
+    console.error("Error fetching audio:", error);
+  }
+}
