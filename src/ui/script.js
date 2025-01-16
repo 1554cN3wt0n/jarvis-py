@@ -38,7 +38,7 @@ function askQuestion() {
   document.getElementById("answer").classList.remove("hidden");
   document.getElementById("answer").textContent = "Fetching answer...";
 
-  fetch(`/ask?question=${question}`)
+  fetch(`/jarvis/ask?question=${question}`)
     .then((response) => response.json())
     .then((result) => {
       document.getElementById("answer").textContent = result["answer"];
@@ -88,7 +88,7 @@ function stopVoiceInput() {
       const formData = new FormData();
       formData.append("audio_file", blob, "audio.wav");
 
-      fetch("/transcript", {
+      fetch("/audio/transcript", {
         method: "POST",
         body: formData,
       })
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", fetchDocumentList);
 
 async function speak(text) {
   try {
-    const apiUrl = `/speak?text=${text}`;
+    const apiUrl = `/audio/speak?text=${text}`;
     const response = await fetch(apiUrl);
 
     if (!response.ok) {

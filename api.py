@@ -9,18 +9,23 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(
+    title="JARVIS",
+    description="APIs for JARVIS",
+    summary="",
+    version="0.0.1",
+)
 jarvis = JARVIS()
 
 app.mount("/ui", StaticFiles(directory="src/ui"), name="ui")
 
 
-@app.get("/documents")
+@app.get("/documents", tags=["Documents"])
 def get_all_documents():
     return jarvis.get_all_documents_list()
 
 
-@app.post("/documents/snapshot/save")
+@app.post("/documents/snapshot/save", tags=["Documents"])
 async def save_documents_snapshot():
     """
     Save current context history in an snapshot."""
@@ -29,7 +34,7 @@ async def save_documents_snapshot():
     return {"message": "Snapshot saved successfully"}
 
 
-@app.post("/documents/snapshot/load")
+@app.post("/documents/snapshot/load", tags=["Documents"])
 async def load_documents_snapshot():
     """
     Load snapshot into memory."""
@@ -38,7 +43,7 @@ async def load_documents_snapshot():
     return {"message": "Snapshot loaded successfully"}
 
 
-@app.post("/document")
+@app.post("/document", tags=["Documents"])
 async def load_document(file: UploadFile = None):
     """
     Load a document to the Jarvis context."""
@@ -49,7 +54,7 @@ async def load_document(file: UploadFile = None):
     return {"message": "Document loaded. You can now ask questions."}
 
 
-@app.delete("/cluster/{cluster_id}/document/{document_id}")
+@app.delete("/cluster/{cluster_id}/document/{document_id}", tags=["Documents"])
 def delete_document(cluster_id: int, document_id: int):
     ok = jarvis.delete_document(cluster_id, document_id)
     if ok:
@@ -57,7 +62,7 @@ def delete_document(cluster_id: int, document_id: int):
     return {"status": "Failed"}
 
 
-@app.post("/image")
+@app.post("/image/classify", tags=["Images"])
 async def classify_image(image_file: UploadFile):
     """
     Transcribe an audio file."""
@@ -67,7 +72,7 @@ async def classify_image(image_file: UploadFile):
     return {"label": classification}
 
 
-@app.post("/detect")
+@app.post("/image/detect", tags=["Images"])
 async def detect_objects(image_file: UploadFile):
     """
     Transcribe an audio file."""
@@ -77,14 +82,14 @@ async def detect_objects(image_file: UploadFile):
     return {"objects": result}
 
 
-@app.get("/ask")
+@app.get("/jarvis/ask", tags=["Jarvis"])
 def ask(question: str):
     """
     Ask a question to Jarvis based on the uploaded contexts (documents)."""
     return jarvis.answer(question)
 
 
-@app.post("/transcript")
+@app.post("/audio/transcript", tags=["Audio"])
 async def transcript(audio_file: UploadFile):
     """
     Transcribe an audio file."""
@@ -94,7 +99,7 @@ async def transcript(audio_file: UploadFile):
     return {"text": transcript}
 
 
-@app.get("/speak")
+@app.get("/audio/speak", tags=["Audio"])
 async def text_to_speech(text: str):
     jarvis.speak(text)
     return FileResponse("tmp/spoken.wav", media_type="audio/wav")

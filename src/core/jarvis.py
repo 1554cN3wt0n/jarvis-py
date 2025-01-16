@@ -19,6 +19,20 @@ class JARVIS(AIEngine, DocumentManager):
         # Add the document to the document manager
         self.add_document(Document(paragraphs, embeddings, filename))
 
+    def get_context(self, question: str) -> str:
+        # Embed the question
+        emb_question = self.embed(question)
+
+        # Get context and context embeddings based on the question
+        document = self.get_document(emb_question)
+        if document is None:
+            return ""
+
+        # Find all possible paragraphs that are related to the question
+        chunk = document.get_chunk(emb_question)
+
+        return chunk.text
+
     def answer(self, question: str) -> Dict[str, any]:
         # Embed the question
         emb_question = self.embed(question)
