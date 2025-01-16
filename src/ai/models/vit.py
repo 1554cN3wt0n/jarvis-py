@@ -98,13 +98,18 @@ class ViT:
         return logits[0]
 
     def classify(self, image: Image) -> str:
+        processed_img = np.array(image.getdata())
         # Image preprocessing
         processed_img = (
-            np.array(image.getdata())
-            .reshape(image.height, image.width, 3)
+            processed_img.reshape(
+                image.height,
+                image.width,
+                processed_img.size // image.height // image.width,
+            )
             .transpose(2, 0, 1)
             .astype(float)
         )
+        processed_img = processed_img[:3]  # Taking just RGB from RGBA
         processed_img = gauss_norm(processed_img / 255.0)
         processed_img = resize_image(processed_img, 224, 224)
         # Get most probable class label

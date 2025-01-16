@@ -53,6 +53,12 @@ Run the api server by running the following commnad:
 uvicorn api:app --port 8080
 ```
 
+or this command to start an https server:
+
+```sh
+uvicorn api:app --port 8080 --host 0.0.0.0 --ssl-keyfile ./certs/key.pem --ssl-certfile ./certs/cert.pem
+```
+
 ## Docker
 
 If you don't want to install the dependencies because it may interfere with your current environment or if you just want to avoid the hassel of install the dependencies and deal with the possible issues, you can also use the docker image. First we build the docker image using the following command.

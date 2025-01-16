@@ -41,6 +41,7 @@
         <div class="audio-wave-container hidden">
           <canvas id="audio-visualizer"></canvas>
         </div>
+        <video id="video-preview" autoplay class="video-preview hidden"></video>
         <textarea
           id="question"
           class="question-input"
@@ -56,8 +57,15 @@
         >
           ⏹️
         </button>
+        <button
+          id="camera-button"
+          class="voice-button"
+          title="Open Camera"
+          onclick="classifyImage()"
+        >
+          📷
+        </button>
       </div>
-
       <div id="answer" class="answer-section hidden">
         Answer will appear here...
       </div>

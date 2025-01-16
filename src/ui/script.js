@@ -239,3 +239,49 @@ async function speak(text) {
     console.error("Error fetching audio:", error);
   }
 }
+
+async function classifyImage() {
+  try {
+    const video = document.getElementById("video-preview");
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.style.display = "block"; // Show the video preview
+    video.srcObject = stream;
+    document.getElementById("video-preview").classList.remove("hidden");
+    // Take a picture after 3 seconds (for demonstration)
+    setTimeout(() => {
+      // Capture the image from the video feed
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Stop the video stream
+      stream.getTracks().forEach((track) => track.stop());
+      video.style.display = "none";
+
+      // Convert the image to a Blob and send it to the backend
+      canvas.toBlob(async (blob) => {
+        const formData = new FormData();
+        formData.append("image_file", blob, "captured-image.png");
+
+        try {
+          document.getElementById("answer").classList.remove("hidden");
+          document.getElementById("answer").textContent = "Fetching answer...";
+          const response = await fetch("/image/classify", {
+            method: "POST",
+            body: formData,
+          });
+          const result = await response.json();
+          document.getElementById("answer").textContent = result["label"];
+          speak(result["label"]);
+          document.getElementById("video-preview").classList.add("hidden");
+        } catch (error) {
+          console.error("Error sending image:", error);
+        }
+      });
+    }, 3000); // Adjust the delay as needed
+  } catch (error) {
+    console.error("Error accessing camera:", error);
+  }
+}
