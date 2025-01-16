@@ -243,7 +243,9 @@ async function speak(text) {
 async function classifyImage() {
   try {
     const video = document.getElementById("video-preview");
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" },
+    });
     video.style.display = "block"; // Show the video preview
     video.srcObject = stream;
     document.getElementById("video-preview").classList.remove("hidden");
