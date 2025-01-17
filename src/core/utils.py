@@ -13,7 +13,7 @@ if sys.platform == "win32":
         tts_engine.save_to_file(text, "tmp/spoken.wav")
         tts_engine.runAndWait()
 
-elif sys.platform == "linux":
+elif sys.platform == "linux" or sys.platform == "darwin":
 
     def generate_speech(text: str):
         command = f'espeak-ng -w tmp/spoken.wav "{text}"'

@@ -118,12 +118,15 @@ class Yolos:
         return classes, bboxes
 
     def detect_objects(self, image: Image):
+        raw_img = np.array(image.getdata())
         raw_img = (
-            np.array(image.getdata())
-            .reshape(image.height, image.width, 3)
+            raw_img.reshape(
+                image.height, image.width, raw_img.size // image.height // image.width
+            )
             .transpose(2, 0, 1)
             .astype(float)
         )
+        raw_img = raw_img[:3]
         raw_img = gauss_norm(raw_img / 255)
         classes, boxes = self(raw_img)
         label_idxs = np.argmax(classes, axis=1)

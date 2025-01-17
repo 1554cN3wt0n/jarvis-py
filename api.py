@@ -83,10 +83,14 @@ async def detect_objects(image_file: UploadFile):
 
 
 @app.get("/jarvis/ask", tags=["Jarvis"])
-def ask(question: str):
+def ask(question: str, context: str = None):
     """
-    Ask a question to Jarvis based on the uploaded contexts (documents)."""
-    return jarvis.answer(question)
+    Ask a question to Jarvis based on the uploaded contexts (documents) or an specific context.
+    """
+    if context is None:
+        return jarvis.answer(question)
+    ans = jarvis.answer_from_context(question, context)
+    return {"answer": ans}
 
 
 @app.post("/audio/transcript", tags=["Audio"])

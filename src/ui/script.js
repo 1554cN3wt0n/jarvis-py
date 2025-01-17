@@ -287,3 +287,63 @@ async function classifyImage() {
     console.error("Error accessing camera:", error);
   }
 }
+
+async function detectObjects() {
+  try {
+    const video = document.getElementById("video-preview");
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" },
+    });
+    video.style.display = "block"; // Show the video preview
+    video.srcObject = stream;
+    document.getElementById("video-preview").classList.remove("hidden");
+    // Take a picture after 3 seconds (for demonstration)
+    setTimeout(() => {
+      // Capture the image from the video feed
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Stop the video stream
+      stream.getTracks().forEach((track) => track.stop());
+      video.style.display = "none";
+
+      // Convert the image to a Blob and send it to the backend
+      canvas.toBlob(async (blob) => {
+        const formData = new FormData();
+        formData.append("image_file", blob, "captured-image.png");
+
+        try {
+          document.getElementById("answer").classList.remove("hidden");
+          document.getElementById("answer").textContent = "Fetching answer...";
+          const response = await fetch("/image/detect", {
+            method: "POST",
+            body: formData,
+          });
+          const result = await response.json();
+          let msg = "";
+          let counter = {};
+          console.log(result);
+          result["objects"].forEach((o) => {
+            if (!(o["label"] in counter)) {
+              counter[o["label"]] = 0;
+            }
+            counter[o["label"]] += 1;
+          });
+          for (let o in counter) {
+            msg += counter[o] + " " + o + ", ";
+          }
+          document.getElementById("answer").textContent = msg;
+          speak(msg);
+          document.getElementById("video-preview").classList.add("hidden");
+        } catch (error) {
+          console.error("Error sending image:", error);
+        }
+      });
+    }, 3000); // Adjust the delay as needed
+  } catch (error) {
+    console.error("Error accessing camera:", error);
+  }
+}
