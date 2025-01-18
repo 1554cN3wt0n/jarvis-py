@@ -45,7 +45,7 @@ class DocumentCluster:
         self.embedding = np.mean(self.document_embeddings, axis=0)
 
     def get_document(self, emb_question: np.array) -> Document:
-        if len(self.document_embeddings) > 0:
+        if self.document_embeddings is not None and len(self.document_embeddings) > 0:
             idx = np.argmax(self.document_embeddings @ emb_question.T).item()
             return self.documents[idx]
         return None

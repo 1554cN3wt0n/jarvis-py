@@ -54,7 +54,7 @@ function startVoiceInput() {
     .getUserMedia({ audio: true })
     .then((stream) => {
       audioStream = stream;
-      audioContext = new AudioContext();
+      audioContext = new AudioContext({ sampleRate: 16000 });
       const source = audioContext.createMediaStreamSource(stream);
       recorder = new Recorder(source, {
         numChannels: 1,
@@ -94,6 +94,7 @@ function stopVoiceInput() {
       })
         .then((response) => response.json())
         .then((data) => {
+          document.getElementById("question").textContent = data["text"];
           console.log("Audio sent successfully:", data);
         })
         .catch((error) => {
