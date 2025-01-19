@@ -7,8 +7,8 @@ services:
     volumes:
       - ${BASE_PATH_MOUNT}:/models
     environment:
-      - BERT_MODEL_PATH=/models/tinybert/tinybert_converted.bin
-      - BERT_TOKENIZER_PATH=/models/tinybert/bert_tokenizer.json
+      - BERT_MODEL_PATH=/models/tinybert/pytorch_model_converted.bin
+      - BERT_TOKENIZER_PATH=/models/tinybert/tokenizer.json
       - BERT_EMB_MODEL_PATH=/models/bert_emb/pytorch_model_converted.bin
       - BERT_EMB_TOKENIZER_PATH=/models/bert_emb/tokenizer.json
       - GPT2_MODEL_PATH=/models/gpt2/gpt2_converted.bin
