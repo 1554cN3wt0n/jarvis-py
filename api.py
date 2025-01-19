@@ -5,7 +5,7 @@ from src.core.jarvis import JARVIS
 import soundfile as sf
 from io import BytesIO
 from PIL import Image
-from dotenv import load_dotenv
+from src.misc.utils import load_dotenv
 
 load_dotenv()
 
@@ -60,6 +60,15 @@ def delete_document(cluster_id: int, document_id: int):
     if ok:
         return {"status": "OK"}
     return {"status": "Failed"}
+
+
+@app.get("/documents/chunk", tags=["Documents"])
+def get_similar_chunk(question: str):
+    emb_question = jarvis.embed(question)
+    doc = jarvis.get_document(emb_question)
+    if doc is None:
+        return {}
+    return doc.get_chunk(emb_question)
 
 
 @app.post("/image/classify", tags=["Images"])
