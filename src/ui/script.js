@@ -348,3 +348,30 @@ async function detectObjects() {
     console.error("Error accessing camera:", error);
   }
 }
+
+async function loadSnapshot() {
+  fetch("/documents/snapshot/load", {
+    method: "POST",
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      alert(result["message"]);
+      fetchDocumentList();
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+async function saveSnapshot() {
+  fetch("/documents/snapshot/save", {
+    method: "POST",
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      alert(result["message"]);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}

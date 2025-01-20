@@ -20,20 +20,39 @@
         <div id="document-list" class="document-list"></div>
       </div>
 
-      <div class="upload-section">
-        <label for="file-upload">Upload Documents</label>
-        <div
-          class="upload-box"
-          onclick="document.getElementById('file-upload').click()"
-        >
-          <input
-            type="file"
-            id="file-upload"
-            multiple
-            onchange="handleFileUpload(event)"
-            onclick="this.value=null;"
-          />
-          <span>Click or drag files here to upload</span>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 20px;
+          gap: 2%;
+        "
+      >
+        <div class="upload-section">
+          <label for="file-upload">Upload Documents</label>
+          <div
+            class="upload-box"
+            onclick="document.getElementById('file-upload').click()"
+          >
+            <input
+              type="file"
+              id="file-upload"
+              multiple
+              onchange="handleFileUpload(event)"
+              onclick="this.value=null;"
+            />
+          </div>
+        </div>
+        <div>
+          <label class="jarvis-button" onclick="loadSnapshot()"
+            >Load Snapshot</label
+          >
+        </div>
+        <div>
+          <label class="jarvis-button" onclick="saveSnapshot()"
+            >Save Snapshot</label
+          >
         </div>
       </div>
 
@@ -46,6 +65,7 @@
           id="question"
           class="question-input"
           placeholder="Type your question here..."
+          style="resize: none"
         ></textarea>
         <label class="jarvis-button" onclick="askQuestion()">Ask</label>
         <button class="voice-button" onclick="startVoiceInput()">🎤</button>

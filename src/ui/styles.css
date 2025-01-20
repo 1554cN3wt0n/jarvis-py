@@ -37,7 +37,8 @@ body {
   }
 
   .upload-section {
-    margin-bottom: 20px;
+    align-items: center;
+    display: flex;
   }
 
   .upload-section input[type="file"] {
